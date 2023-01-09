@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+# Copyright (c) 2023, Oracle and/or its affiliates.
 
 import argparse
 import sys
@@ -47,8 +48,8 @@ def run(cmd):
 def username_collision(h, u):
     username = u.encode('utf-8')
     usernames = []
-    for u in h[u"users"]:
-        usernames.append(u[u"username"])
+    for u in h["users"]:
+        usernames.append(u["username"])
     if username in usernames:
         return True
     return False
@@ -118,11 +119,11 @@ def add_cmd(json_file, name, username, authorized_keys, tags, shell):
 
     tag_validation(tags)
 
-    based = base64.b64encode(keys)
+    based = base64.b64encode(bytes(keys, "utf-8"))
     h["users"].append({'uid': uid,
                        'name' : name,
                        'username' : username,
-                       'authorized_keys' : based,
+                       'authorized_keys' : str(based, 'utf-8'),
                        'shell': shell,
                        'tags' : tags})
     write_json(json_file, h)
@@ -145,7 +146,7 @@ def write_authorized_keys(user):
     os.chown(authorized_keys_file, pwent.pw_uid, pwent.pw_gid)
 
 def apply_cmd(json_file, tags):
-    utf8_tags = list(map(lambda s: unicode(s), tags))
+    utf8_tags = list([str(s) for s in tags])
     import pwd
     import grp
     REDTEAMSUDOERS = "/etc/sudoers.d/redteam"
@@ -314,7 +315,7 @@ if __name__ == "__main__":
             sys.exit(1)
         uid = add_cmd(args.json_file, args.name, args.username,
                       args.authorized_keys, args.tags, args.shell)
-        print("uid:", uid)
+        print(("uid:", uid))
 
     elif args.cmd == 'del':
         if not args.uid:
