@@ -1,4 +1,5 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
+# Copyright (c) 2023, Oracle and/or its affiliates.
 
 import argparse
 import sys
@@ -39,14 +40,14 @@ def read_json():
 def cmd_add(ipaddr):
     create_if_not_exists()
     h = read_json()
-    h[u'instances'].append(ipaddr)
+    h['instances'].append(ipaddr)
     write_json(h)
 
 def cmd_del(ipaddr):
     h = None
     h = read_json()
     try:
-        h[u'instances'].remove(ipaddr)
+        h['instances'].remove(ipaddr)
         write_json(h)
     except ValueError:
         sys.stderr.write("ip address {} not in instances.json\n".format(ipaddr))
@@ -76,9 +77,9 @@ def push_cmd(keypath):
         (stdout, stderr) = p.communicate()
         if p.returncode != 0:
             logger.error("git: {}".format(stdout))
-            loger.error("git returned {}! aborting\n".format(return_code))
+            logger.error("git returned {}! aborting\n".format(p.returncode))
             sys.exit(1)
-        for instance in h[u'instances']:
+        for instance in h['instances']:
             if not test_host_port(instance, 22):
                 continue
             ssh_options = [

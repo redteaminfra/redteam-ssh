@@ -1,3 +1,5 @@
-Michael Leibowitz <michael.leibowitz@intel.com>
+Michael Leibowitz
 
-Topher Timzen <topher.timzen@intel.com>
+Topher Timzen
+
+William Kinderman
